@@ -55,11 +55,11 @@ app.use(AuthRoute);
 
 // Jalankan store sync sekali saja jika tabel session belum ada di database cloud
 
-// (async () => {
-//     await db.sync();
-// })();
+(async () => {
+    await db.sync();
+})();
 
-// store.sync();
+store.sync();
 
 const PORT = process.env.APP_PORT || 5000;
 app.listen(PORT, () => {
