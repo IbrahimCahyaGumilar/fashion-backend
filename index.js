@@ -28,9 +28,7 @@ app.use(session({
     saveUninitialized: false,
     store: store,
     cookie: {
-        // 'auto' di lokal ok, tapi saat deploy WAJIB true karena HTTPS
         secure: process.env.NODE_ENV === "production" ? true : false, 
-        // sameSite none wajib agar cookie bisa dikirim lintas domain (Vercel ke Render)
         sameSite: process.env.NODE_ENV === "production" ? 'none' : 'lax', 
         maxAge: 1000 * 60 * 60 * 24
     }
@@ -39,10 +37,9 @@ app.use(session({
 // KONFIGURASI CORS
 app.use(cors({
     credentials: true,
-    // Gunakan array agar bisa menerima dari localhost (saat dev) dan URL Vercel (saat production)
     origin: [
         'http://localhost:5173', 
-        'https://fashion-blog-frontend.vercel.app' // GANTI dengan URL Vercel kamu nanti
+        'https://fashion-blog-frontend.vercel.app'
     ],
 }));
 
@@ -53,15 +50,18 @@ app.use(UserRoute);
 app.use(BlogRoute);
 app.use(AuthRoute);
 
-// Jalankan store sync sekali saja jika tabel session belum ada di database cloud
-
+// Sinkronisasi Database
 (async () => {
     await db.sync();
 })();
 
-store.sync();
 
-const PORT = process.env.APP_PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}...`);
-});
+if (process.env.NODE_ENV !== 'production') {
+    const PORT = process.env.APP_PORT || 5000;
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}...`);
+    });
+}
+
+
+export default app;
