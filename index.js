@@ -10,7 +10,9 @@ import UserRoute from "./routes/UserRoute.js";
 import BlogRoute from "./routes/BlogRoute.js";
 import AuthRoute from "./routes/AuthRoute.js";
 
-dotenv.config();
+if (process.env.NODE_ENV !== 'production') {
+    dotenv.config();
+}
 
 const app = express();
 
@@ -28,8 +30,8 @@ app.use(session({
     saveUninitialized: false,
     store: store,
     cookie: {
-        secure: process.env.NODE_ENV === "production" ? true : false, 
-        sameSite: process.env.NODE_ENV === "production" ? 'none' : 'lax', 
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? 'none' : 'lax',
         maxAge: 1000 * 60 * 60 * 24
     }
 }));
