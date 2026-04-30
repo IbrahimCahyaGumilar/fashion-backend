@@ -13,7 +13,7 @@ const db = new Sequelize(
         dialect: "mysql",
         dialectOptions: {
             ssl: {
-                rejectUnauthorized: true,
+                rejectUnauthorized: false,
             }
         },
 
