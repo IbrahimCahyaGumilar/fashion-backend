@@ -1,0 +1,67 @@
+import express from "express";
+import cors from "cors";
+import session from "express-session";
+import dotenv from "dotenv";
+import SequelizeStore from "connect-session-sequelize";
+import db from "./config/Database.js";
+
+// Import Routes
+import UserRoute from "./routes/UserRoute.js";
+import BlogRoute from "./routes/BlogRoute.js";
+import AuthRoute from "./routes/AuthRoute.js";
+
+dotenv.config();
+
+const app = express();
+
+const sessionStore = SequelizeStore(session.Store);
+const store = new sessionStore({
+    db: db,
+    checkExpirationInterval: 15 * 60 * 1000, 
+    expiration: 24 * 60 * 60 * 1000   
+});
+
+// KONFIGURASI SESSION & COOKIE
+app.use(session({
+    secret: process.env.SESS_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: store,
+    cookie: {
+        // 'auto' di lokal ok, tapi saat deploy WAJIB true karena HTTPS
+        secure: process.env.NODE_ENV === "production" ? true : false, 
+        // sameSite none wajib agar cookie bisa dikirim lintas domain (Vercel ke Render)
+        sameSite: process.env.NODE_ENV === "production" ? 'none' : 'lax', 
+        maxAge: 1000 * 60 * 60 * 24
+    }
+}));
+
+// KONFIGURASI CORS
+app.use(cors({
+    credentials: true,
+    // Gunakan array agar bisa menerima dari localhost (saat dev) dan URL Vercel (saat production)
+    origin: [
+        'http://localhost:5173', 
+        'https://fashion-blog-frontend.vercel.app' // GANTI dengan URL Vercel kamu nanti
+    ],
+}));
+
+app.use(express.json());
+
+// Routes
+app.use(UserRoute);
+app.use(BlogRoute);
+app.use(AuthRoute);
+
+// Jalankan store sync sekali saja jika tabel session belum ada di database cloud
+
+// (async () => {
+//     await db.sync();
+// })();
+
+// store.sync();
+
+const PORT = process.env.APP_PORT || 5000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}...`);
+});
