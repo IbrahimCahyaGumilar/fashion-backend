@@ -41,7 +41,7 @@ app.use(cors({
     credentials: true,
     origin: [
         'http://localhost:5173', 
-        'https://fashion-blog-frontend.vercel.app'
+        'https://cutting-fashion.vercel.app'
     ],
 }));
 
@@ -53,9 +53,9 @@ app.use(BlogRoute);
 app.use(AuthRoute);
 
 // Sinkronisasi Database
-(async () => {
-    await db.sync();
-})();
+// (async () => {
+//     await db.sync();
+// })();
 
 
 if (process.env.NODE_ENV !== 'production') {
