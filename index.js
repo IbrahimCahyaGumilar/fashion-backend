@@ -16,6 +16,8 @@ if (process.env.NODE_ENV !== 'production') {
 
 const app = express();
 
+app.set('trust proxy', 1);
+
 const sessionStore = SequelizeStore(session.Store);
 const store = new sessionStore({
     db: db,
@@ -29,8 +31,10 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     store: store,
+    proxy: true,
     cookie: {
-        secure: process.env.NODE_ENV === "production",
+        // secure: process.env.NODE_ENV === "production",
+        secure: true,
         sameSite: process.env.NODE_ENV === "production" ? 'none' : 'lax',
         maxAge: 1000 * 60 * 60 * 24
     }
