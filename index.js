@@ -29,9 +29,12 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     store: store,
+    proxy: true,
     cookie: {
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? 'none' : 'lax',
+        // secure: process.env.NODE_ENV === "production",
+        // sameSite: process.env.NODE_ENV === "production" ? 'none' : 'lax',
+        secure: true,
+        sameSite: 'none',
         maxAge: 1000 * 60 * 60 * 24
     }
 }));
